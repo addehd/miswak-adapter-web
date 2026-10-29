@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Miswak toothbrush adapter — Kotlin/Wasm parametric generator</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<div id="app">
+  <aside id="panel">
+    <h1>Miswak adapter <small>Kotlin → WasmGC → three.js</small></h1>
+    <div id="status" class="status">loading Kotlin/Wasm…</div>
+
+    <div class="seg" id="modes">
+      <button data-mode="manual" class="on">Manual</button>
+      <button data-mode="electric">Electric</button>
+      <button data-mode="cap">Cap</button>
+      <button data-mode="assembled">Assembled</button>
+      <button data-mode="exploded">Exploded</button>
+    </div>
+    <div class="row" id="variantRow" style="display:none">
+      <label>Head for assembled/exploded</label>
+      <select id="variant"><option value="manual">manual</option><option value="electric">electric</option></select>
+    </div>
+
+    <div id="controls"></div>
+
+    <div class="row buttons">
+      <button id="dlMain">⬇ STL adapter</button>
+      <button id="dlCap">⬇ STL cap</button>
+      <button id="reset" class="ghost">Reset</button>
+    </div>
+    <label class="chk"><input type="checkbox" id="section"> Section view (cut through the head axis)</label>
+
+    <section id="fit">
+      <h2>Fit test <span id="fitSummary" class="badge">…</span></h2>
+      <div class="ctl"><div class="top"><label>Printer tolerance per surface (both parts)</label><span id="tolv">±0.00</span> mm</div>
+        <input type="range" id="tol" min="-0.15" max="0.15" step="0.01" value="0"></div>
+      <table id="fitTable"></table>
+      <p class="foot">Live checks computed in Kotlin from the current parameters. <b>+</b> = over-extrusion (parts grow), <b>−</b> = under-extrusion.
+        At the default parameters they match the virtual fit test of the exported STLs (trimesh + manifold3d helix sweep): free running to the cone,
+        safe from −0.15 to +0.10 mm, +0.15 mm marginal; 22.5 MPa at 5 N (2.0×), 45 MPa at 10 N.
+        Static results: <a href="fit-test/cross_section_assembled.png" target="_blank">assembled cross-section</a> ·
+        <a href="fit-test/clearance_heatmap.png" target="_blank">clearance heat map</a> ·
+        <a href="fit-test/REPORT.md" target="_blank">REPORT.md</a> ·
+        <a href="fit-test/sweep_final.csv" target="_blank">sweep CSV</a> ·
+        <a href="fit-test/thread_test_head.stl">thread test stub STL</a> + <a href="fit-test/thread_test_cap.stl">cap STL</a></p>
+    </section>
+    <pre id="info"></pre>
+    <p class="foot">Geometry is generated in Kotlin (compiled to WebAssembly GC) by revolve / bend-sweep / thread-helix meshing — no CSG library. STL export is binary, in print orientation. Electric socket is a placeholder. Defaults = design v2 (fit-tested).</p>
+  </aside>
+  <main id="view"><canvas id="c"></canvas><div id="fallback" hidden></div></main>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
