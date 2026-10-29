@@ -167,6 +167,19 @@ function render() {
   window.__ready = true;
 }
 
+// ---------- preset views (front = looking down the head axis, -X; side = bend plane, from -Y) ----------
+const VIEWS = { front: [1, 0, 0], side: [0, -1, 0], iso: [0.9, -1.2, 0.55] };
+function setView(name) {
+  const box = new THREE.Box3().setFromObject(group);
+  if (box.isEmpty()) return;
+  const c = box.getCenter(new THREE.Vector3());
+  const dist = (box.getSize(new THREE.Vector3()).length() / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.15;
+  controls.target.copy(c);
+  camera.position.copy(c).add(new THREE.Vector3(...VIEWS[name]).normalize().multiplyScalar(dist));
+  camera.up.set(0, 0, 1); camera.lookAt(c); controls.update();
+  document.querySelectorAll('#views button').forEach((x) => x.classList.toggle('on', x.dataset.view === name));
+}
+
 function resize() {
   const v = $('#view'), w = v.clientWidth, h = v.clientHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
@@ -240,6 +253,7 @@ function makeUI() {
   c.querySelector('input').addEventListener('input', (e) => { explode.v = Number(e.target.value); $('#exv').textContent = explode.v; if (mode === 'exploded') render(); });
   c.id = 'exRow'; c.style.display = 'none'; $('#variantRow').after(c);
 
+  document.querySelectorAll('#views button').forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
   document.querySelectorAll('#modes button').forEach((b) => b.addEventListener('click', () => {
     mode = b.dataset.mode;
     document.querySelectorAll('#modes button').forEach((x) => x.classList.toggle('on', x === b));
@@ -304,7 +318,7 @@ try {
   await loadKotlin();
   status('Kotlin/Wasm module loaded');
   refresh();
-  window.miswak = { K, build, stlBytes, vals, refresh, get cache() { return cache; }, setSection: (on) => { $('#section').checked = on; setSection(on); }, setTol: (t) => { const r = $('#tol'); r.value = t; r.dispatchEvent(new Event('input')); }, setMode: (m) => document.querySelector(`#modes [data-mode=${m}]`).click(), camera, controls };
+  window.miswak = { K, build, stlBytes, vals, refresh, get cache() { return cache; }, setSection: (on) => { $('#section').checked = on; setSection(on); }, setTol: (t) => { const r = $('#tol'); r.value = t; r.dispatchEvent(new Event('input')); }, setMode: (m) => document.querySelector(`#modes [data-mode=${m}]`).click(), setView, camera, controls };
 } catch (e) {
   console.error(e);
   const f = $('#fallback'); f.hidden = false;
