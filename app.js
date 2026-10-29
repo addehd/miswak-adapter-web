@@ -18,6 +18,7 @@ const SPEC = [
   { g: 'adv', n: 'headD', l: 'Head diameter', min: 7, max: 14, step: 0.1, d: 9 },
   { g: 'adv', n: 'neckHold', l: 'Straight neck length', min: 2, max: 30, step: 1, d: 6 },
   { g: 'adv', n: 'bendR', l: 'Bend radius', min: 6, max: 20, step: 0.5, d: 10 },
+  { g: 'adv', n: 'neckFilletR', l: 'Neck→head fillet R (0 = v3 flare)', min: 0, max: 6, step: 0.1, d: 2.5 },
   { g: 'adv', n: 'handleDBottom', l: 'Handle Ø bottom', min: 6, max: 16, step: 0.5, d: 10 },
   { g: 'adv', n: 'handleDTop', l: 'Handle Ø top', min: 4, max: 12, step: 0.5, d: 6 },
   { g: 'adv', n: 'threadLen', l: 'Thread length', min: 4, max: 12, step: 0.5, d: 5.5 },
